@@ -66,7 +66,7 @@ namespace LeapMotion {
     //! Receives and manages Leap controller data.
     class Listener : public Leap::Listener
     {
-    protected:
+    public:
         Listener();
         
         virtual void	onConnect( const Leap::Controller& controller );
@@ -85,7 +85,8 @@ namespace LeapMotion {
         volatile bool	mNewFrame;
         
         Leap::Frame		mFrame;
-        
+        volatile bool   mRecording;
+        volatile int    recordingCount;
         friend class	Device;
     };
     
@@ -99,12 +100,13 @@ namespace LeapMotion {
     public:
         //! Creates and returns device instance.
         static DeviceRef	create();
+
         void bind();
         ~Device();
         
         //! Returns LEAP controller associated with this device's listener.
         Leap::Controller*	getController() const;
-        
+        bool                isRecording();
         //! Returns true if app is focused for this device.
         virtual bool		hasFocus() const;
         //! Returns true if the device has exited.
@@ -113,6 +115,10 @@ namespace LeapMotion {
         virtual bool		isConnected() const;
         //! Returns true if LEAP application is initialized.
         virtual bool		isInitialized() const;
+        
+        virtual void        outPutRecordingFile();
+        
+        virtual void        startRecording();
         
         /*! Sets frame event handler. \a eventHandler has the signature \a void(Frame).
          \a obj is the instance receiving the event. */

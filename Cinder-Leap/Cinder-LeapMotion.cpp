@@ -34,8 +34,17 @@
  *
  */
 
-#include "Cinder-LeapMotion.h"
 
+/**
+ *  Copyright (c)2015, Alvin Sun
+ *  All rights reserved.
+ *  Implemented the original file. Fix the siginal2 bug on mac.
+ *  Add Recording Functions
+ */
+
+#include "Cinder-LeapMotion.h"
+#include <iostream>
+#include <fstream>
 #include "cinder/app/App.h"
 
 using namespace ci;
@@ -120,6 +129,8 @@ namespace LeapMotion {
         mFocused			= false;
         mInitialized		= false;
         mNewFrame			= false;
+        mRecording          = false;
+        recordingCount      = 0;
     }
     
     void Listener::onConnect( const Leap::Controller& controller )
@@ -159,6 +170,9 @@ namespace LeapMotion {
             mFrame		= controller.frame();
             mNewFrame	= true;
         }
+        if (mRecording) {
+            recordingCount++;
+        }
     }
     
     void Listener::onInit( const Leap::Controller& controller )
@@ -178,6 +192,13 @@ namespace LeapMotion {
     {
         mListener.mMutex	= &mMutex;
         mController			= new Leap::Controller( mListener );
+
+        
+        
+
+        
+        mController->setPolicy(Leap::Controller::POLICY_IMAGES);
+        mController->setPolicy(Leap::Controller::PolicyFlag::POLICY_OPTIMIZE_HMD);
         
         //App::get()->getSignalUpdate().connect( bind( &Device::update, this ) );
     }
@@ -219,6 +240,35 @@ namespace LeapMotion {
     void Device::connectEventHandler( const function<void( Leap::Frame )>& eventHandler )
     {
         mEventHandler = eventHandler;
+    }
+    
+    void Device::startRecording(){
+        mListener.mRecording = true;
+    }
+    
+    bool Device::isRecording(){
+        return mListener.mRecording;
+    }
+    
+    void Device::outPutRecordingFile(){
+        string outFilename = "frames.data";
+        fstream out(outFilename, std::ios_base::trunc | std::ios_base::out);
+        if(out)
+        {
+            for (int f = mListener.recordingCount; f >= 0; f--) {
+                Leap::Frame frameToSerialize = this->mController->frame(f);
+                std::string serialized = frameToSerialize.serialize();
+                out << (long)serialized.length() << serialized;
+            }
+            out.flush();
+            out.close();
+        }
+        else if(errno) {
+            std::cout << "Error: " << errno << std::endl;
+            std::cout << "Couldn't open " << outFilename << " for writing." << std::endl;
+        }
+        mListener.mRecording = false;
+        mListener.recordingCount = 0;
     }
     
     void Device::update()

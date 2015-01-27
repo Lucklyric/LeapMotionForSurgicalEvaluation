@@ -17,6 +17,7 @@
 #include "cinder/Thread.h"
 #include "cinder/params/Params.h"
 #include "AntTweakBar.h"
+#include "cinder/gl/TextureFont.h"
 #include <functional>
 //Windows header files used
 //#define WINVER 0x0500
@@ -33,6 +34,8 @@ using namespace ci::app;
 class LeapMotionMain : public ci::app::AppBasic
 {
 public:
+    Font mFont;
+    gl::TextureFontRef mTextureFont;
     void draw();
     void drawHand(Leap::Hand &hand, Vec3f position);
     void drawHands();
@@ -40,6 +43,8 @@ public:
     void shutdown();
     void setupGui();
     void update();
+    void CallDeviceUpdate();
+    void StartRecording();
     void prepareSettings(Settings *settings);
     void keyDown( KeyEvent event );
     std::shared_ptr<std::thread>		mThread;
@@ -51,6 +56,8 @@ private:
     
     ci::CameraPersp			mCamera;
     ci::params::InterfaceGlRef	mParams;
+    ci::params::InterfaceGlRef	mLeftHandInfo;
+    ci::params::InterfaceGlRef	mRightHandInfo;
     bool showParams;
     
     
@@ -61,6 +68,8 @@ private:
     
     bool mStaticPosHand, mStaticOrientHand;
     
+    Vec3f hand1PalmPosition, hand2PalmPostion;
+    Vec3f hand1Velocity, hand2Velocity;
     
     
 };
@@ -76,8 +85,38 @@ void LeapMotionMain::shutdown()
 
 void LeapMotionMain::drawHand(Leap::Hand &hand, Vec3f position)
 {
+    Vec3f handPalm = LeapMotion::toVec3f(hand.palmPosition());
+
+    Vec3f handVelocity = LeapMotion::toVec3f(hand.palmVelocity());
+
+    float confiLevel = hand.confidence();
+    std::stringstream string1;string1 << "Label='Position X:" << handPalm.x << " Y:"<<handPalm.y << " Z:"<<handPalm.z<<"' ";
+    std::stringstream stringV;stringV << "Label='Velocity X:" << handVelocity.x << " Y:"<<handVelocity.y << " Z:"<<handVelocity.z<<"' ";
+    std::stringstream stringCL;stringCL << "Label='ConfidenceLevel:" << confiLevel << "' ";
+    
+    
+    if (hand.isLeft()) {
+
+        mLeftHandInfo->setOptions("LeftHandPosition",string1.str());
+        mLeftHandInfo->setOptions("LeftHandV",stringV.str());
+        mLeftHandInfo->setOptions("Confidence",stringCL.str());
+        
+    }else{
+        mRightHandInfo->setOptions("RightHandPosition",string1.str());
+        mRightHandInfo->setOptions("RightHandV",stringV.str());
+        mRightHandInfo->setOptions("Confidence",stringCL.str());
+    }
+    
+
+
+    
+    
+    
+    
     gl::translate(position);
     gl::scale(mScale, mScale, mScale);
+    
+
     
     Leap::Matrix handTransform = hand.basis();
     
@@ -118,6 +157,7 @@ void LeapMotionMain::drawHand(Leap::Hand &hand, Vec3f position)
         Leap::Bone pipBone = finger.bone(Bone::Type::TYPE_INTERMEDIATE);
         Leap::Bone dipBone = finger.bone(Bone::Type::TYPE_PROXIMAL);
         Leap::Bone mcpBone = finger.bone(Bone::Type::TYPE_METACARPAL);
+        
         
         fingerTipOrigin =  tipBone.center();
         fingerPipPos = pipBone.center();
@@ -207,7 +247,6 @@ void LeapMotionMain::drawHands()
         
         Leap::Hand hand = *handIter;
         
-        
         // Get hand data
         Vec3f handDir		= LeapMotion::toVec3f( hand.direction() );
         Vec3f palmNorm		= LeapMotion::toVec3f( hand.palmNormal() );
@@ -215,7 +254,11 @@ void LeapMotionMain::drawHands()
         Vec3f palmVel		= LeapMotion::toVec3f( hand.palmVelocity() );
         Vec3f sphereCenter	= LeapMotion::toVec3f( hand.sphereCenter() );
         float sphereRadius	= hand.sphereRadius();
-        
+        if (hand.isLeft()) {
+           hand1PalmPosition = LeapMotion::toVec3f( hand.palmPosition());
+
+        }
+        //mParams->setOptions()
 //        // Hand sphere
 //        gl::enableWireframe();
 //        gl::color( ColorAf( Colorf::gray( 0.9f ), 0.5f ) );
@@ -237,7 +280,8 @@ void LeapMotionMain::drawHands()
 //        gl::drawVector( palmPos, palmPos + handDir * 30.0f, headLength, headRadius );
         
         // Hand normal
-        gl::color( 0.0f, 0.0f, 1.0f, 0.5f );
+        gl::color( 1.0f, 1.0f, 1.0f, 1.0f );
+      
         gl::drawVector( palmPos, palmPos + palmNorm * 30.0f, headLength, headRadius );
         
 //        // Hand velocity
@@ -288,12 +332,14 @@ void LeapMotionMain::draw()
     glPushAttrib(GL_ALL_ATTRIB_BITS);
     mParams->draw();
     glPopAttrib();
+
 }
 
 void LeapMotionMain::update()
 {
     mLeap->update();
     //std::cout << "frame" <<std::endl;
+
 }
 
 void LeapMotionMain::onFrame( Leap::Frame frame )
@@ -322,16 +368,32 @@ void LeapMotionMain::onFrame( Leap::Frame frame )
 void LeapMotionMain::setupGui()
 {
     //         std::cout << "Run here" <<std::endl;
-        mParams = cinder::params::InterfaceGl::create("Parameters", Vec2i(200,300));
-        mParams->addParam ("Scene Rotation", &mObjOrientation);
-        mParams->addParam ("Hand Translation", &mTranslate);
-        mParams->addParam ("Hand Scale", &mScale);
-        mParams->addParam ("Static Hand Orientation", &mStaticOrientHand);
-        mParams->addParam ("Static Hand Position", &mStaticPosHand);
+    mParams = cinder::params::InterfaceGl::create("Parameters", Vec2i(300,250));
+    mParams->addParam ("Scene Rotation", &mObjOrientation);
+    mParams->addParam ("Hand Translation", &mTranslate);
+    mParams->addParam ("Hand Scale", &mScale);
+    mParams->addParam ("Static Hand Orientation", &mStaticOrientHand);
+    mParams->addParam ("Static Hand Position", &mStaticPosHand);
+    mParams->addSeparator();
+    mParams->addButton("StartRecording", std::bind(&LeapMotionMain::StartRecording,this));
     
-        TwDefine(" Parameters color='0 128 255' alpha=255 ");
-        TwDefine(" Parameters/'Scene Rotation' opened=true ");
-        TwDefine(" Parameters/'Hand Translation' opened=true ");
+    
+    mLeftHandInfo = cinder::params::InterfaceGl::create("Left Hand Information", Vec2i(300,200));
+    mLeftHandInfo->addText("LeftHandPosition","Label='Position:'");
+    mLeftHandInfo->addText("LeftHandV","Label='Velocity:'");
+    mLeftHandInfo->addText("Confidence","Label='ConfidenceLevel:'");
+    
+    mRightHandInfo=cinder::params::InterfaceGl::create("Right Hand Information", Vec2i(300,200));
+    mRightHandInfo->addText("RightHandPosition","Label='Position:'");
+    mRightHandInfo->addText("RightHandV","Label='Velocity:'");
+    mRightHandInfo->addText("Confidence","Label='ConfidenceLevel:'");
+    
+    //TwDefine(" Parameters color='0 128 255' alpha=255 ");
+    TwDefine(" Parameters/'Scene Rotation' opened=true ");
+    TwDefine(" Parameters/'Hand Translation' opened=false ");
+    TwDefine(" Parameters position='10 10'");
+    TwDefine(" 'Left Hand Information' position='10 260'");
+    TwDefine(" 'Right Hand Information' position='10 460'");
 }
 
 
@@ -345,9 +407,6 @@ void LeapMotionMain::setup()
     mTranslate.set(0,200,0);
     
     showParams = TRUE;
-    
-    
-    
     // Set up OpenGL
     gl::enableAlphaBlending();
     gl::enableDepthRead();
@@ -356,11 +415,26 @@ void LeapMotionMain::setup()
     // Set up camera
     mCamera = CameraPersp( getWindowWidth(), getWindowHeight(), 60.0f, 0.01f, 5000.0f );
     mCamera.lookAt( Vec3f( 0.0f, 500.0f, 500.0f ), Vec3f( 0.0f, 250.0f, 0.0f ) );
-    
+    setupGui();
 //    // Start device
     mLeap = LeapMotion::Device::create();
     mLeap->connectEventHandler( &LeapMotionMain::onFrame, this );
-    setupGui();
+    
+}
+
+void LeapMotionMain::CallDeviceUpdate(){
+    mLeap->update();
+}
+
+void LeapMotionMain::StartRecording(){
+    //mLeap->outPutRecordingFile();
+    if (mLeap->isRecording()) {
+        mLeap->outPutRecordingFile();
+        mParams->setOptions("StopRecording","Label='StartRecording'");
+    }else{
+        mLeap->startRecording();
+        mParams->setOptions("StartRecording","Label='StopRecording'");
+    }
 }
 
 void LeapMotionMain::keyDown( KeyEvent event )
@@ -368,6 +442,8 @@ void LeapMotionMain::keyDown( KeyEvent event )
     if(event.getChar() == 'g')
     {
         showParams = !showParams;
+    }else if(event.getChar() == 'q'){
+        App::get()->quit();
     }
 }
 
