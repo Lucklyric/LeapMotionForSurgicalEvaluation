@@ -21,6 +21,7 @@
 		A8298E671A747B8C00C9279C /* Cinder-LeapMotion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8298E651A747B8C00C9279C /* Cinder-LeapMotion.cpp */; };
 		A8298E691A747C1B00C9279C /* libLeap.dylib in Sources */ = {isa = PBXBuildFile; fileRef = A8298E681A747C1B00C9279C /* libLeap.dylib */; };
 		A8298E6C1A74950A00C9279C /* libLeap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = A8298E681A747C1B00C9279C /* libLeap.dylib */; };
+		A85971FC1A796A09000B7E5D /* DataRecorder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A85971FB1A796A09000B7E5D /* DataRecorder.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -60,6 +61,8 @@
 		A8298E651A747B8C00C9279C /* Cinder-LeapMotion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "Cinder-LeapMotion.cpp"; sourceTree = "<group>"; };
 		A8298E661A747B8C00C9279C /* Cinder-LeapMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Cinder-LeapMotion.h"; sourceTree = "<group>"; };
 		A8298E681A747C1B00C9279C /* libLeap.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libLeap.dylib; sourceTree = "<group>"; };
+		A85971FA1A79689C000B7E5D /* DataRecorder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataRecorder.h; path = ../include/DataRecorder.h; sourceTree = "<group>"; };
+		A85971FB1A796A09000B7E5D /* DataRecorder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DataRecorder.cpp; path = ../src/DataRecorder.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +90,7 @@
 			isa = PBXGroup;
 			children = (
 				A8298E621A747A6000C9279C /* LeapMotionMain.cpp */,
+				A85971FB1A796A09000B7E5D /* DataRecorder.cpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -146,6 +150,7 @@
 				A8298E601A747A5800C9279C /* LeapMath.h */,
 				A8298E611A747A5800C9279C /* Resources.h */,
 				32CA4F630368D1EE00C91783 /* LeapMotion_Prefix.pch */,
+				A85971FA1A79689C000B7E5D /* DataRecorder.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -242,6 +247,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A8298E691A747C1B00C9279C /* libLeap.dylib in Sources */,
+				A85971FC1A796A09000B7E5D /* DataRecorder.cpp in Sources */,
 				A8298E671A747B8C00C9279C /* Cinder-LeapMotion.cpp in Sources */,
 				A8298E631A747A6000C9279C /* LeapMotionMain.cpp in Sources */,
 			);

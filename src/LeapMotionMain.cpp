@@ -18,6 +18,8 @@
 #include "cinder/params/Params.h"
 #include "AntTweakBar.h"
 #include "cinder/gl/TextureFont.h"
+#include "cinder/app/FileDropEvent.h"
+#include <fstream>
 #include <functional>
 //Windows header files used
 //#define WINVER 0x0500
@@ -46,6 +48,7 @@ public:
     void CallDeviceUpdate();
     void StartRecording();
     void prepareSettings(Settings *settings);
+    void fileDrop (FileDropEvent event);
     void keyDown( KeyEvent event );
     std::shared_ptr<std::thread>		mThread;
 private:
@@ -58,8 +61,14 @@ private:
     ci::params::InterfaceGlRef	mParams;
     ci::params::InterfaceGlRef	mLeftHandInfo;
     ci::params::InterfaceGlRef	mRightHandInfo;
+    //Recording Parameters
+    std::vector<Leap::Frame> deserializedFrames;
+    long int recordingFrameIndex;
+    bool isPause;
+    
     bool showParams;
     
+    bool isPlayingRecording; // IF the state is playing the recorded frames data
     
     
     Quatf mObjOrientation;
@@ -241,9 +250,16 @@ void LeapMotionMain::drawHands()
     gl::rotate(mObjOrientation);
     float headLength = 6.0f;
     float headRadius = 3.0f;
+    Leap::Frame currentFrame;
+    if (isPlayingRecording) {
+        currentFrame = deserializedFrames[recordingFrameIndex];
+    }else{
+        currentFrame = mFrame;
+    }
+    const Leap::HandList& hands = currentFrame.hands();
+    
     // Iterate through hands
-    const Leap::HandList& hands = mFrame.hands();
-    for ( Leap::HandList::const_iterator handIter = hands.begin(); handIter != hands.end(); ++handIter ) {
+        for ( Leap::HandList::const_iterator handIter = hands.begin(); handIter != hands.end(); ++handIter ) {
         
         Leap::Hand hand = *handIter;
         
@@ -313,6 +329,8 @@ void LeapMotionMain::drawHands()
 
 void LeapMotionMain::draw()
 {
+    
+    
     // Clear window
     gl::setViewport( getWindowBounds() );
     gl::clear( ColorA(0, 0, 0, 0.0) );
@@ -337,9 +355,21 @@ void LeapMotionMain::draw()
 
 void LeapMotionMain::update()
 {
-    mLeap->update();
+    if (isPause) {
+        return;
+    }
+    if (isPlayingRecording) {
+        std::cout << "CurrentIndex :" << recordingFrameIndex <<std::endl;
+        if (recordingFrameIndex >= deserializedFrames.size()-1) {
+            recordingFrameIndex =  0;
+        }else{
+            recordingFrameIndex++;
+        }
+    }else{
+        mLeap->update();
+    }
     //std::cout << "frame" <<std::endl;
-
+    
 }
 
 void LeapMotionMain::onFrame( Leap::Frame frame )
@@ -363,6 +393,9 @@ void LeapMotionMain::onFrame( Leap::Frame frame )
         const Vector direction2 = hand2.direction();
         const Vector position2 = hand2.palmPosition();
     }
+    
+    
+    
 }
 
 void LeapMotionMain::setupGui()
@@ -399,6 +432,9 @@ void LeapMotionMain::setupGui()
 
 void LeapMotionMain::setup()
 {
+    recordingFrameIndex = 0;
+    isPlayingRecording = false;
+    isPause = false;
     
     mStaticOrientHand = NO;
     mStaticPosHand = NO;
@@ -428,9 +464,9 @@ void LeapMotionMain::CallDeviceUpdate(){
 
 void LeapMotionMain::StartRecording(){
     //mLeap->outPutRecordingFile();
-    if (mLeap->isRecording()) {
+    if ((mLeap->isRecording())) {
         mLeap->outPutRecordingFile();
-        mParams->setOptions("StopRecording","Label='StartRecording'");
+        mParams->setOptions("StartRecording","Label='StartRecording'");
     }else{
         mLeap->startRecording();
         mParams->setOptions("StartRecording","Label='StopRecording'");
@@ -444,9 +480,48 @@ void LeapMotionMain::keyDown( KeyEvent event )
         showParams = !showParams;
     }else if(event.getChar() == 'q'){
         App::get()->quit();
+    }else if(event.getChar() == 'R'){
+        StartRecording();
+    }else if(event.getChar() == 'p'){
+        isPause = !isPause;
+    }else if(event.getCode() == KeyEvent::KEY_LEFT){
+        std::cout << "left press"<<std::endl;
+        recordingFrameIndex --; if(recordingFrameIndex < 0) recordingFrameIndex = 0;
+    }else if(event.getCode() == KeyEvent::KEY_RIGHT){
+        recordingFrameIndex ++; if(recordingFrameIndex > deserializedFrames.size()-1) recordingFrameIndex = deserializedFrames.size()-1;
     }
 }
 
+void LeapMotionMain::fileDrop(cinder::app::FileDropEvent event){
+    deserializedFrames.clear();
+    std::string inFilename = event.getFile(0).string();
+    std::ifstream in(inFilename, std::fstream::in);
+    std::string contents;
+    if (in)
+    {
+        in.seekg(0, std::ios::beg);
+        long nextBlockSize = 0;
+        in >> nextBlockSize;
+        std::cout << nextBlockSize << std::endl;
+        while (!in.eof())
+        {
+            contents.resize(nextBlockSize);
+            in.read(&contents[0], nextBlockSize);
+            Leap::Frame newFrame;
+            newFrame.deserialize(contents);
+            if(newFrame.isValid()) deserializedFrames.push_back(newFrame);
+            in >> nextBlockSize;
+        }
+        in.close();
+    }
+    else if(errno){
+        std::cout << "Error: " << errno << std::endl;
+        std::cout << "Couldn't open " << inFilename << " for reading." << std::endl;
+    }
+    std::cout << deserializedFrames.size() << std::endl;
+    isPause = true;
+    isPlayingRecording = true;
+}
 
 
 CINDER_APP_BASIC( LeapMotionMain, RendererGl )

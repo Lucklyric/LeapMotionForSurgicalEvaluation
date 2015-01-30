@@ -41,6 +41,7 @@
 #include "cinder/Matrix.h"
 #include "cinder/Thread.h"
 #include "cinder/Vector.h"
+#include "DataRecorder.h"
 #include <functional>
 
 namespace LeapMotion {
@@ -83,7 +84,7 @@ namespace LeapMotion {
         volatile bool	mInitialized;
         std::mutex		*mMutex;
         volatile bool	mNewFrame;
-        
+        DataRecorder*   mDataRecorder;
         Leap::Frame		mFrame;
         volatile bool   mRecording;
         volatile int    recordingCount;

@@ -46,6 +46,7 @@
 #include <iostream>
 #include <fstream>
 #include "cinder/app/App.h"
+#include <ctime>
 
 using namespace ci;
 using namespace ci::app;
@@ -131,7 +132,9 @@ namespace LeapMotion {
         mNewFrame			= false;
         mRecording          = false;
         recordingCount      = 0;
+        mDataRecorder        = new DataRecorder();
     }
+    
     
     void Listener::onConnect( const Leap::Controller& controller )
     {
@@ -149,6 +152,7 @@ namespace LeapMotion {
     {
         lock_guard<mutex> lock( *mMutex );
         mExited = true;
+        delete mDataRecorder;
     }
     
     void Listener::onFocusGained( const Leap::Controller& controller )
@@ -171,7 +175,9 @@ namespace LeapMotion {
             mNewFrame	= true;
         }
         if (mRecording) {
-            recordingCount++;
+            this->recordingCount++;
+            cout << recordingCount << endl;
+            mDataRecorder->ParseCurrentFrametoFile(controller.frame());
         }
     }
     
@@ -251,24 +257,39 @@ namespace LeapMotion {
     }
     
     void Device::outPutRecordingFile(){
-        string outFilename = "frames.data";
-        fstream out(outFilename, std::ios_base::trunc | std::ios_base::out);
-        if(out)
-        {
-            for (int f = mListener.recordingCount; f >= 0; f--) {
-                Leap::Frame frameToSerialize = this->mController->frame(f);
-                std::string serialized = frameToSerialize.serialize();
-                out << (long)serialized.length() << serialized;
-            }
-            out.flush();
-            out.close();
-        }
-        else if(errno) {
-            std::cout << "Error: " << errno << std::endl;
-            std::cout << "Couldn't open " << outFilename << " for writing." << std::endl;
-        }
+//        
+//        time_t t = time(0);   // get time now
+//        struct tm * now = localtime( & t );
+//        stringstream ss;
+//        
+//        ss << (now->tm_year + 1900) << '-'
+//        << (now->tm_mon + 1) << '-'
+//        <<  now->tm_mday << '-' << now->tm_hour << '-' << now->tm_min << '-' << now->tm_sec
+//        << ".data"<<endl;
+//        
+//        
+//        
+//        string outFilename = ss.str();
+//
+//        fstream out(outFilename, std::ios_base::app | std::ios_base::out);
+//        if(out)
+//        {
+//            for (int f = mListener.recordingCount; f >= 0; f--) {
+//                Leap::Frame frameToSerialize = this->mController->frame(f);
+//                std::string serialized = frameToSerialize.serialize();
+//                out << (long)serialized.length() << serialized;
+//            }
+//            out.flush();
+//            out.close();
+//        }
+//        else if(errno) {
+//            std::cout << "Error: " << errno << std::endl;
+//            std::cout << "Couldn't open " << outFilename << " for writing." << std::endl;
+//        }
+//        mListener.mRecording = false;
+//        mListener.recordingCount = 0;
         mListener.mRecording = false;
-        mListener.recordingCount = 0;
+        mListener.mDataRecorder->EndReocrding();
     }
     
     void Device::update()
