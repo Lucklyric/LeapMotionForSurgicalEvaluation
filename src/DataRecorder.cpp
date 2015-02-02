@@ -42,6 +42,9 @@ void DataRecorder::ParseCurrentFrametoFile(Leap::Frame currentFrame){
         currentFileName = ssLeapData.str();
         currentLeftHandFileName = ssLeftHandData.str();
         currentRighthandFileName = ssRightHandData.str();
+        InitHandMotionTxtFile(currentLeftHandFileName);
+        InitHandMotionTxtFile(currentRighthandFileName);
+        
         isWriting = true;
         currentFrameIndex = 0;
     }
@@ -79,6 +82,10 @@ string DataRecorder::ParseOneRowHandInformation(Leap::Hand hand){
     cinder::Vec3f palmPos		= LeapMotion::toVec3f( hand.palmPosition() );
     cinder::Vec3f palmVel		= LeapMotion::toVec3f( hand.palmVelocity() );
 
+    std::stringstream oneRowString;
+    oneRowString << handDir.x << " " << handDir.y << " " << handDir.z << " " << palmNorm.x << " " << palmNorm.y << " " << palmNorm.z << " " << palmPos.x << " " << palmPos.y << " " << palmPos.z <<" " << palmVel.x << " " << palmVel.y << " " << palmVel.z << " " << hand.confidence();
+    
+    return oneRowString.str();
     
 }
 
@@ -87,7 +94,7 @@ void DataRecorder::WriteToLeftHandFile(Leap::Hand leftHand){
     fstream out(currentLeftHandFileName, std::ios_base::app | std::ios_base::out);
     if(out)
     {
-        out << leftHand.frame().toString()<<"efefefe" <<endl;
+        out << leftHand.frame().timestamp() <<"  "<< leftHand.frame().id() << "  "<< ParseOneRowHandInformation(leftHand) << std::endl;
         out.flush();
         out.close();
     }
@@ -103,7 +110,7 @@ void DataRecorder::WriteToRightHandFile(Leap::Hand rightHand){
     fstream out(currentRighthandFileName, std::ios_base::app | std::ios_base::out);
     if(out)
     {
-        out << currentFrameIndex <<"  "<< rightHand.frame().id() << "  "<< ParseOneRowHandInformation(rightHand) << endl;
+        out << rightHand.frame().timestamp() <<"  "<< rightHand.frame().id() << "  "<< ParseOneRowHandInformation(rightHand) << std::endl;
         out.flush();
         out.close();
     }
@@ -111,4 +118,19 @@ void DataRecorder::WriteToRightHandFile(Leap::Hand rightHand){
         std::cout << "Error: " << errno << std::endl;
         std::cout << "Couldn't open " << currentFileName << " for writing." << std::endl;
     }
+}
+
+void DataRecorder::InitHandMotionTxtFile(string filename){
+    fstream out(filename, std::ios_base::app | std::ios_base::out);
+    if(out)
+    {
+        out << "TimeStamp" <<"  "<< "FrameID" << "  "<< "HandDirection:X" << " " << "HandDirection:Y" << " "<<"HandDirection:Z" << "  "<< "PalmNorm:X" << " " << "PalmNorm:Y" << " "<<"PalmNorm:Z"<< "  "<< "PalmPos:X" << " " << "PalmPos:Y" << " "<<"PalmPos:Z"<<  "  "<< "PalmVel:X" << " " << "PalmVel:Y" << " "<<"PalmVel:Z" << " " << "Confidence" << std::endl;
+        out.flush();
+        out.close();
+    }
+    else if(errno) {
+        std::cout << "Error: " << errno << std::endl;
+        std::cout << "Couldn't open " << currentFileName << " for writing." << std::endl;
+    }
+
 }

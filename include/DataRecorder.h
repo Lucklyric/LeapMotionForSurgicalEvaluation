@@ -31,6 +31,7 @@ public:
     void EndReocrding();
     void WriteToLeftHandFile(Leap::Hand leftHand);
     void WriteToRightHandFile(Leap::Hand rightHand);
+    void InitHandMotionTxtFile(string filename);
     string ParseOneRowHandInformation(Leap::Hand hand);
 };
 
