@@ -197,7 +197,6 @@ void LeapMotionMain::drawHand(Leap::Hand &hand, Vec3f position)
         gl::drawLine(LeapMotion::toVec3f(fingerPipPos), LeapMotion::toVec3f(fingerDipPos) );
         gl::drawLine(LeapMotion::toVec3f(fingerDipPos), LeapMotion::toVec3f(fingerTipOrigin) );
         
-        
         fingerTransform = tipBone.basis().rigidInverse();
         gl::pushMatrices();
         gl::translate(LeapMotion::toVec3f(fingerTipOrigin));

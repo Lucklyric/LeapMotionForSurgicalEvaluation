@@ -78,6 +78,8 @@ namespace LeapMotion {
         virtual void	onFocusLost( const Leap::Controller& controller );
         virtual void	onInit( const Leap::Controller& controller );
         
+        void recordCurrentFrame();
+        
         volatile bool	mConnected;
         volatile bool	mExited;
         volatile bool	mFocused;

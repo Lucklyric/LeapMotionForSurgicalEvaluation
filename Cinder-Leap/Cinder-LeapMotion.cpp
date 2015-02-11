@@ -174,12 +174,21 @@ namespace LeapMotion {
             mFrame		= controller.frame();
             mNewFrame	= true;
         }
+//        if (mRecording) {
+//            this->recordingCount++;
+//            cout << recordingCount << endl;
+//            mDataRecorder->ParseCurrentFrametoFile(controller.frame());
+//        }
+    }
+    
+    void Listener::recordCurrentFrame(){
         if (mRecording) {
             this->recordingCount++;
             cout << recordingCount << endl;
-            mDataRecorder->ParseCurrentFrametoFile(controller.frame());
+            mDataRecorder->ParseCurrentFrametoFile(mFrame);
         }
     }
+    
     
     void Listener::onInit( const Leap::Controller& controller )
     {
@@ -295,10 +304,10 @@ namespace LeapMotion {
     void Device::update()
     {
         lock_guard<mutex> lock( mMutex );
-        if ( mListener.mConnected && mListener.mInitialized && mListener.mNewFrame ) {
+        if ( mListener.mConnected && mListener.mInitialized) {
             mEventHandler( mListener.mFrame );
             mListener.mNewFrame = false;
+            mListener.recordCurrentFrame();
         }
     }
-    
 }
