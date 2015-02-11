@@ -19,7 +19,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -44,10 +44,19 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(CINDER_PATH)\src\AntTweakBar;$(CINDER_PATH)\boost;$(CINDER_PATH)\include;$(LEAP_SDK)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(CINDER_PATH)\lib\msw\$(PlatformTarget);$(LEAP_SDK)\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Leapd.lib;cinder-$(PlatformToolset)_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreLinkEvent>
+      <Command>xcopy /yr "$(LEAP_SDK)\lib\x86\Leapd.dll" "$(TargetDir)"
+xcopy /yr "$(LEAP_SDK)\lib\x86\msvcp120d.dll" "$(TargetDir)"
+xcopy /yr "$(LEAP_SDK)\lib\x86\msvcr120d.dll" "$(TargetDir)"</Command>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -64,6 +73,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Cinder-Leap\Cinder-LeapMotion.cpp" />
+    <ClCompile Include="..\..\..\src\DataRecorder.cpp" />
+    <ClCompile Include="..\..\..\src\LeapMotionMain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Cinder-Leap\Cinder-LeapMotion.h" />
+    <ClInclude Include="..\..\..\include\DataRecorder.h" />
+    <ClInclude Include="..\..\..\include\Leap.h" />
+    <ClInclude Include="..\..\..\include\LeapMath.h" />
+    <ClInclude Include="..\..\..\include\Resources.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

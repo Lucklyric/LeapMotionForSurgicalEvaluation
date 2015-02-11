@@ -1,5 +1,31 @@
-﻿Build started 2/10/2015 9:53:59 PM.
+﻿Build started 2/11/2015 1:40:01 PM.
+     1>Project "\\psf\Home\Documents\Alvin\Code\CMPUT604\LeapMotionA\LeapMotionForSurgicalEvaluation\vs64\LeapMotionWin\LeapMotionWin\LeapMotionWin.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\LIB\Cinder\cinder_0.8.6_vc2013\cinder_0.8.6_vc2013\src\AntTweakBar /IC:\LIB\Cinder\cinder_0.8.6_vc2013\cinder_0.8.6_vc2013\boost /IC:\LIB\Cinder\cinder_0.8.6_vc2013\cinder_0.8.6_vc2013\include /IC:\LIB\Leap\LeapDeveloperKit_2.2.2+24469_win\LeapSDK\include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\..\src\LeapMotionMain.cpp
+         LeapMotionMain.cpp
+     1>\\psf\home\documents\alvin\code\cmput604\leapmotiona\leapmotionforsurgicalevaluation\src\leapmotionmain.cpp(25): warning C4005: 'WINVER' : macro redefinition
+                 c:\program files (x86)\windows kits\8.1\include\shared\sdkddkver.h(215) : see previous definition of 'WINVER'
+     1>\\psf\home\documents\alvin\code\cmput604\leapmotiona\leapmotionforsurgicalevaluation\src\leapmotionmain.cpp(362): warning C4018: '>=' : signed/unsigned mismatch
+     1>\\psf\home\documents\alvin\code\cmput604\leapmotiona\leapmotionforsurgicalevaluation\src\leapmotionmain.cpp(490): warning C4018: '>' : signed/unsigned mismatch
+       PreLinkEvent:
+         xcopy /yr "C:\LIB\Leap\LeapDeveloperKit_2.2.2+24469_win\LeapSDK\lib\x86\Leapd.dll" "\\psf\Home\Documents\Alvin\Code\CMPUT604\LeapMotionA\LeapMotionForSurgicalEvaluation\vs64\LeapMotionWin\Debug\"
+         xcopy /yr "C:\LIB\Leap\LeapDeveloperKit_2.2.2+24469_win\LeapSDK\lib\x86\msvcp120d.dll" "\\psf\Home\Documents\Alvin\Code\CMPUT604\LeapMotionA\LeapMotionForSurgicalEvaluation\vs64\LeapMotionWin\Debug\"
+         xcopy /yr "C:\LIB\Leap\LeapDeveloperKit_2.2.2+24469_win\LeapSDK\lib\x86\msvcr120d.dll" "\\psf\Home\Documents\Alvin\Code\CMPUT604\LeapMotionA\LeapMotionForSurgicalEvaluation\vs64\LeapMotionWin\Debug\"
+         :VCEnd
+         C:\LIB\Leap\LeapDeveloperKit_2.2.2+24469_win\LeapSDK\lib\x86\Leapd.dll
+         1 File(s) copied
+         C:\LIB\Leap\LeapDeveloperKit_2.2.2+24469_win\LeapSDK\lib\x86\msvcp120d.dll
+         1 File(s) copied
+         C:\LIB\Leap\LeapDeveloperKit_2.2.2+24469_win\LeapSDK\lib\x86\msvcr120d.dll
+         1 File(s) copied
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"\\psf\Home\Documents\Alvin\Code\CMPUT604\LeapMotionA\LeapMotionForSurgicalEvaluation\vs64\LeapMotionWin\Debug\LeapMotionWin.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:\LIB\Cinder\cinder_0.8.6_vc2013\cinder_0.8.6_vc2013\lib\msw\x86 /LIBPATH:C:\LIB\Leap\LeapDeveloperKit_2.2.2+24469_win\LeapSDK\lib\x86 Leapd.lib "cinder-v120_d.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"\\psf\Home\Documents\Alvin\Code\CMPUT604\LeapMotionA\LeapMotionForSurgicalEvaluation\vs64\LeapMotionWin\Debug\LeapMotionWin.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"\\psf\Home\Documents\Alvin\Code\CMPUT604\LeapMotionA\LeapMotionForSurgicalEvaluation\vs64\LeapMotionWin\Debug\LeapMotionWin.lib" /MACHINE:X86 "Debug\Cinder-LeapMotion.obj"
+         Debug\DataRecorder.obj
+         Debug\LeapMotionMain.obj
+     1>LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
+         LeapMotionWin.vcxproj -> \\psf\Home\Documents\Alvin\Code\CMPUT604\LeapMotionA\LeapMotionForSurgicalEvaluation\vs64\LeapMotionWin\Debug\LeapMotionWin.exe
+     1>Done Building Project "\\psf\Home\Documents\Alvin\Code\CMPUT604\LeapMotionA\LeapMotionForSurgicalEvaluation\vs64\LeapMotionWin\LeapMotionWin\LeapMotionWin.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.49
+Time Elapsed 00:00:14.39

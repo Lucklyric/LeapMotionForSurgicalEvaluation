@@ -435,8 +435,8 @@ void LeapMotionMain::setup()
     isPlayingRecording = false;
     isPause = false;
     
-    mStaticOrientHand = NO;
-    mStaticPosHand = NO;
+    mStaticOrientHand = false;
+    mStaticPosHand = false;
     
     mScale = 1;
     mTranslate.set(0,200,0);
