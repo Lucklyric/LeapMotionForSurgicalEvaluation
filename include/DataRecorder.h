@@ -16,7 +16,6 @@
 #include "cinder/Matrix.h"
 #include "cinder/Thread.h"
 #include "cinder/Vector.h"
-#include "DataRecorder.h"
 #include <functional>
 using namespace std;
 class DataRecorder{

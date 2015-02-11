@@ -13,7 +13,7 @@
 #include "cinder/gl/Texture.h"
 #include "cinder/Quaternion.h"
 #include "Leap.h"
-#include "Cinder-LeapMotion.h"
+#include "../Cinder-Leap/Cinder-LeapMotion.h"
 #include "cinder/Thread.h"
 #include "cinder/params/Params.h"
 #include "AntTweakBar.h"
@@ -22,9 +22,9 @@
 #include <fstream>
 #include <functional>
 //Windows header files used
-//#define WINVER 0x0500
-//#include <iostream>
-//#include <time.h>
+#define WINVER 0x0500
+#include <iostream>
+#include <time.h>
 
 using namespace LeapMotion;
 using namespace Leap;
