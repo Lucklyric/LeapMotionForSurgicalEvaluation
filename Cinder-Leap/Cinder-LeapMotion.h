@@ -90,6 +90,7 @@ namespace LeapMotion {
         Leap::Frame		mFrame;
         volatile bool   mRecording;
         volatile int    recordingCount;
+		volatile int	mDeviceFrequency;
         friend class	Device;
     };
     
@@ -118,6 +119,8 @@ namespace LeapMotion {
         virtual bool		isConnected() const;
         //! Returns true if LEAP application is initialized.
         virtual bool		isInitialized() const;
+
+		virtual float		returnDeviceFrequency();
         
         virtual void        outPutRecordingFile();
         

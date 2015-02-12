@@ -375,6 +375,10 @@ void LeapMotionMain::onFrame( Leap::Frame frame )
 {
     mFrame = frame;
     
+	//Update Frequency
+	std::stringstream string1; string1 << "Label='DeviceFrequency:" << mLeap->returnDeviceFrequency() << "'";
+	mParams->setOptions("DeviceFrequency",string1.str());
+
     //std::cout << "calback" <<std::endl;
     
     
@@ -399,8 +403,9 @@ void LeapMotionMain::onFrame( Leap::Frame frame )
 
 void LeapMotionMain::setupGui()
 {
-    //         std::cout << "Run here" <<std::endl;
+    std::cout << "Init GUI" <<std::endl;
     mParams = cinder::params::InterfaceGl::create("Parameters", Vec2i(300,250));
+	mParams->addText("DeviceFrequency","Lable='DeviceFrequency:'");
     mParams->addParam ("Scene Rotation", &mObjOrientation);
     mParams->addParam ("Hand Translation", &mTranslate);
     mParams->addParam ("Hand Scale", &mScale);

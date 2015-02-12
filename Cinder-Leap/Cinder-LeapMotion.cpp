@@ -174,17 +174,17 @@ namespace LeapMotion {
             mFrame		= controller.frame();
             mNewFrame	= true;
         }
-//        if (mRecording) {
-//            this->recordingCount++;
-//            cout << recordingCount << endl;
-//            mDataRecorder->ParseCurrentFrametoFile(controller.frame());
-//        }
+		Leap::Frame lastFrame = controller.frame(1);
+		float diffTimeStamp =(controller.frame().timestamp() - lastFrame.timestamp());
+		//_RPT1(_CRT_WARN, "Different Time,%f\n", diffTimeStamp);
+		double leapFrequency = 1 / (diffTimeStamp/1000000.0f);
+		mDeviceFrequency = leapFrequency;
+		//_RPT1(_CRT_WARN,"Frequency,%lf\n", leapFrequency);
     }
     
     void Listener::recordCurrentFrame(){
         if (mRecording) {
             this->recordingCount++;
-            cout << recordingCount << endl;
             mDataRecorder->ParseCurrentFrametoFile(mFrame);
         }
     }
@@ -261,6 +261,10 @@ namespace LeapMotion {
         mListener.mRecording = true;
     }
     
+	float Device::returnDeviceFrequency(){
+		return mListener.mDeviceFrequency;
+	}
+
     bool Device::isRecording(){
         return mListener.mRecording;
     }

@@ -1,12 +1,8 @@
-﻿Build started 2/11/2015 1:40:01 PM.
+﻿Build started 2/12/2015 3:46:59 PM.
      1>Project "\\psf\Home\Documents\Alvin\Code\CMPUT604\LeapMotionA\LeapMotionForSurgicalEvaluation\vs64\LeapMotionWin\LeapMotionWin\LeapMotionWin.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\LIB\Cinder\cinder_0.8.6_vc2013\cinder_0.8.6_vc2013\src\AntTweakBar /IC:\LIB\Cinder\cinder_0.8.6_vc2013\cinder_0.8.6_vc2013\boost /IC:\LIB\Cinder\cinder_0.8.6_vc2013\cinder_0.8.6_vc2013\include /IC:\LIB\Leap\LeapDeveloperKit_2.2.2+24469_win\LeapSDK\include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\..\src\LeapMotionMain.cpp
-         LeapMotionMain.cpp
-     1>\\psf\home\documents\alvin\code\cmput604\leapmotiona\leapmotionforsurgicalevaluation\src\leapmotionmain.cpp(25): warning C4005: 'WINVER' : macro redefinition
-                 c:\program files (x86)\windows kits\8.1\include\shared\sdkddkver.h(215) : see previous definition of 'WINVER'
-     1>\\psf\home\documents\alvin\code\cmput604\leapmotiona\leapmotionforsurgicalevaluation\src\leapmotionmain.cpp(362): warning C4018: '>=' : signed/unsigned mismatch
-     1>\\psf\home\documents\alvin\code\cmput604\leapmotiona\leapmotionforsurgicalevaluation\src\leapmotionmain.cpp(490): warning C4018: '>' : signed/unsigned mismatch
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\LIB\Cinder\cinder_0.8.6_vc2013\cinder_0.8.6_vc2013\src\AntTweakBar /IC:\LIB\Cinder\cinder_0.8.6_vc2013\cinder_0.8.6_vc2013\boost /IC:\LIB\Cinder\cinder_0.8.6_vc2013\cinder_0.8.6_vc2013\include /IC:\LIB\Leap\LeapDeveloperKit_2.2.2+24469_win\LeapSDK\include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\..\src\DataRecorder.cpp
+         DataRecorder.cpp
        PreLinkEvent:
          xcopy /yr "C:\LIB\Leap\LeapDeveloperKit_2.2.2+24469_win\LeapSDK\lib\x86\Leapd.dll" "\\psf\Home\Documents\Alvin\Code\CMPUT604\LeapMotionA\LeapMotionForSurgicalEvaluation\vs64\LeapMotionWin\Debug\"
          xcopy /yr "C:\LIB\Leap\LeapDeveloperKit_2.2.2+24469_win\LeapSDK\lib\x86\msvcp120d.dll" "\\psf\Home\Documents\Alvin\Code\CMPUT604\LeapMotionA\LeapMotionForSurgicalEvaluation\vs64\LeapMotionWin\Debug\"
@@ -28,4 +24,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:14.39
+Time Elapsed 00:00:08.66

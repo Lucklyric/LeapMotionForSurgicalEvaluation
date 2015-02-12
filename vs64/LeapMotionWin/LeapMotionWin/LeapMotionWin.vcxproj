@@ -46,11 +46,13 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(CINDER_PATH)\src\AntTweakBar;$(CINDER_PATH)\boost;$(CINDER_PATH)\include;$(LEAP_SDK)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CINDER_PATH)\lib\msw\$(PlatformTarget);$(LEAP_SDK)\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Leapd.lib;cinder-$(PlatformToolset)_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>NotSet</SubSystem>
     </Link>
     <PreLinkEvent>
       <Command>xcopy /yr "$(LEAP_SDK)\lib\x86\Leapd.dll" "$(TargetDir)"
