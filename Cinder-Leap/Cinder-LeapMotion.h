@@ -43,6 +43,7 @@
 #include "cinder/Vector.h"
 #include "../include/DataRecorder.h"
 #include <functional>
+#include "../include/Timer.h"
 
 namespace LeapMotion {
     
@@ -125,6 +126,8 @@ namespace LeapMotion {
         virtual void        outPutRecordingFile();
         
         virtual void        startRecording();
+
+		void fixedTimeRecord();
         
         /*! Sets frame event handler. \a eventHandler has the signature \a void(Frame).
          \a obj is the instance receiving the event. */
@@ -147,6 +150,7 @@ namespace LeapMotion {
         Leap::Device		mDevice;
         Listener			mListener;
         std::mutex			mMutex;
+		MTimer				mDeviceTimer;
     };
     
 }

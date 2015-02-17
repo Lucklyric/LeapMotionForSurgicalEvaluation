@@ -47,7 +47,6 @@ void DataRecorder::ParseCurrentFrametoFile(Leap::Frame currentFrame){
         currentRighthandFileName = ssRightHandData.str();
         InitHandMotionTxtFile(currentLeftHandFileName);
         InitHandMotionTxtFile(currentRighthandFileName);
-        
         isWriting = true;
         currentFrameIndex = 0;
     }

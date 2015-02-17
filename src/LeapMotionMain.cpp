@@ -21,6 +21,7 @@
 #include "cinder/app/FileDropEvent.h"
 #include <fstream>
 #include <functional>
+#include "../include/Timer.h"
 //Windows header files used
 #define WINVER 0x0500
 #include <iostream>
@@ -32,6 +33,11 @@ using namespace ci;
 using namespace ci::app;
 
 #define __BONES__
+void CALLBACK TimerProc(void* p)
+{
+	LeapMotion::DeviceRef mDevice = *((LeapMotion::DeviceRef*)p);
+	mDevice->fixedTimeRecord();
+}
 
 class LeapMotionMain : public ci::app::AppBasic
 {
@@ -63,6 +69,8 @@ private:
     ci::params::InterfaceGlRef	mRightHandInfo;
     //Recording Parameters
     std::vector<Leap::Frame> deserializedFrames;
+
+	MTimer					appTimer;
     long int recordingFrameIndex;
     bool isPause;
     
@@ -469,10 +477,14 @@ void LeapMotionMain::CallDeviceUpdate(){
 void LeapMotionMain::StartRecording(){
     //mLeap->outPutRecordingFile();
     if ((mLeap->isRecording())) {
+		appTimer.Cancel();
         mLeap->outPutRecordingFile();
         mParams->setOptions("StartRecording","Label='StartRecording'");
     }else{
-        mLeap->startRecording();
+        //mLeap->startRecording();
+		appTimer.registerHandler(TimerProc,&mLeap);
+		appTimer.setInterval((1/100)*1000);
+		appTimer.Start();
         mParams->setOptions("StartRecording","Label='StopRecording'");
     }
 }

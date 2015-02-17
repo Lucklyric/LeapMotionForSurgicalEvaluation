@@ -43,6 +43,7 @@
  */
 
 #include "Cinder-LeapMotion.h"
+
 #include <iostream>
 #include <fstream>
 #include "cinder/app/App.h"
@@ -311,7 +312,12 @@ namespace LeapMotion {
         if ( mListener.mConnected && mListener.mInitialized) {
             mEventHandler( mListener.mFrame );
             mListener.mNewFrame = false;
-            mListener.recordCurrentFrame();
+           // mListener.recordCurrentFrame();
         }
     }
+
+	void Device::fixedTimeRecord(){
+		mListener.mRecording = true;
+		mListener.recordCurrentFrame();
+	}
 }
