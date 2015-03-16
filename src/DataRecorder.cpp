@@ -23,6 +23,8 @@ DataRecorder::DataRecorder(){
     this->isWriting = false;
     this->currentFileName = "";
     this->currentFrameIndex = 0;
+	this->leftHandId = 0;
+	this->rightHandId = 0;
 }
 
 void DataRecorder::ParseCurrentFrametoFile(Leap::Frame currentFrame){
@@ -67,9 +69,23 @@ void DataRecorder::ParseCurrentFrametoFile(Leap::Frame currentFrame){
     for ( Leap::HandList::const_iterator handIter = hands.begin(); handIter != hands.end(); ++handIter ) {
         Leap::Hand hand = *handIter;
         if (hand.isLeft()){
-            WriteToLeftHandFile(hand);
+			if (this->leftHandId == 0){
+				this->leftHandId = hand.id();
+			}
+			else{
+				if (this->leftHandId == hand.id()){
+					WriteToLeftHandFile(hand);
+				}
+			}
         }else{
-            WriteToRightHandFile(hand);
+			if (this->rightHandId == 0){
+				this->rightHandId = hand.id();
+			}
+			else{
+				if (this->rightHandId == hand.id()){
+					WriteToRightHandFile(hand);
+				}
+			}
         }
     }
 }

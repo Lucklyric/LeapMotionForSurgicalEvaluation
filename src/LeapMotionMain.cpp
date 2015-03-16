@@ -35,8 +35,8 @@ using namespace ci::app;
 #define __BONES__
 void CALLBACK TimerProc(void* p)
 {
-	LeapMotion::DeviceRef mDevice = *((LeapMotion::DeviceRef*)p);
-	mDevice->fixedTimeRecord();
+	//LeapMotion::DeviceRef mDevice = *((LeapMotion::DeviceRef*)p);
+	//mDevice->fixedTimeRecord();
 }
 
 class LeapMotionMain : public ci::app::AppBasic
@@ -481,7 +481,7 @@ void LeapMotionMain::StartRecording(){
         mLeap->outPutRecordingFile();
         mParams->setOptions("StartRecording","Label='StartRecording'");
     }else{
-        //mLeap->startRecording();
+        mLeap->startRecording();
 		appTimer.registerHandler(TimerProc,&mLeap);
 		appTimer.setInterval((1/100)*1000);
 		appTimer.Start();

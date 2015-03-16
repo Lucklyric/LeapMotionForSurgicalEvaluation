@@ -133,6 +133,8 @@ namespace LeapMotion {
         mNewFrame			= false;
         mRecording          = false;
         recordingCount      = 0;
+		leftHandId			= 0;
+		rightHandId			= 0;
         mDataRecorder        = new DataRecorder();
     }
     
@@ -180,7 +182,14 @@ namespace LeapMotion {
 		//_RPT1(_CRT_WARN, "Different Time,%f\n", diffTimeStamp);
 		double leapFrequency = 1 / (diffTimeStamp/1000000.0f);
 		mDeviceFrequency = leapFrequency;
-		//_RPT1(_CRT_WARN,"Frequency,%lf\n", leapFrequency);
+
+		if (mRecording){
+			this->recordingCount++;
+			mDataRecorder->ParseCurrentFrametoFile(controller.frame());
+			//_RPT1(_CRT_WARN, "I have go here%d",controller.frame().id());
+		}
+
+		
     }
     
     void Listener::recordCurrentFrame(){

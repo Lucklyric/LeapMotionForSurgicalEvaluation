@@ -25,6 +25,8 @@ public:
     string currentLeftHandFileName;
     string currentRighthandFileName;
     long int currentFrameIndex;
+	long int leftHandId;
+	long int rightHandId;
     DataRecorder();
     void ParseCurrentFrametoFile(Leap::Frame currentFrame);
     void EndReocrding();

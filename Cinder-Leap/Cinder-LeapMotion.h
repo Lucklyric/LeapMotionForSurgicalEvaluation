@@ -92,6 +92,7 @@ namespace LeapMotion {
         volatile bool   mRecording;
         volatile int    recordingCount;
 		volatile int	mDeviceFrequency;
+		int leftHandId, rightHandId;
         friend class	Device;
     };
     
