@@ -173,6 +173,7 @@ namespace LeapMotion {
     void Listener::onFrame( const Leap::Controller& controller )
     {
         lock_guard<mutex> lock( *mMutex );
+		_RPT1(_CRT_WARN, "CurrentThread%d", std::this_thread::get_id());
         if ( !mNewFrame ) {
             mFrame		= controller.frame();
             mNewFrame	= true;
@@ -193,6 +194,7 @@ namespace LeapMotion {
     }
     
     void Listener::recordCurrentFrame(){
+		lock_guard<mutex> lock(*mMutex);
         if (mRecording) {
             this->recordingCount++;
             mDataRecorder->ParseCurrentFrametoFile(mFrame);
@@ -225,7 +227,7 @@ namespace LeapMotion {
         mController->setPolicy(Leap::Controller::POLICY_IMAGES);
         mController->setPolicy(Leap::Controller::PolicyFlag::POLICY_OPTIMIZE_HMD);
         
-        //App::get()->getSignalUpdate().connect( bind( &Device::update, this ) );
+		//app::App::get()->getSignalUpdate().connect(std::bind(&Device::update, this));
     }
     void Device::bind(){
         //App::get()->getSignalUpdate().connect(bind(&Device::hasExited,this));
@@ -317,6 +319,7 @@ namespace LeapMotion {
     
     void Device::update()
     {
+		_RPT1(_CRT_WARN, "CurrentThreds%d", std::this_thread::get_id());
         lock_guard<mutex> lock( mMutex );
         if ( mListener.mConnected && mListener.mInitialized) {
             mEventHandler( mListener.mFrame );

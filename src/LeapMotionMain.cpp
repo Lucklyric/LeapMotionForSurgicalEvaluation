@@ -12,6 +12,7 @@
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
 #include "cinder/Quaternion.h"
+#include "../include/CanonView.h"
 #include "Leap.h"
 #include "../Cinder-Leap/Cinder-LeapMotion.h"
 #include "cinder/Thread.h"
@@ -22,6 +23,7 @@
 #include <fstream>
 #include <functional>
 #include "../include/Timer.h"
+
 //Windows header files used
 #define WINVER 0x0500
 #include <iostream>
@@ -31,6 +33,7 @@ using namespace LeapMotion;
 using namespace Leap;
 using namespace ci;
 using namespace ci::app;
+using namespace std;
 
 #define __BONES__
 void CALLBACK TimerProc(void* p)
@@ -44,7 +47,9 @@ class LeapMotionMain : public ci::app::AppBasic
 public:
     Font mFont;
     gl::TextureFontRef mTextureFont;
-    void draw();
+
+	void virtualizationDraw();
+	void cameraDraw();
     void drawHand(Leap::Hand &hand, Vec3f position);
     void drawHands();
     void setup();
@@ -56,6 +61,7 @@ public:
     void prepareSettings(Settings *settings);
     void fileDrop (FileDropEvent event);
     void keyDown( KeyEvent event );
+	void LeapMotionMain::connectWindow(ci::app::WindowRef window);
     std::shared_ptr<std::thread>		mThread;
 private:
     
@@ -88,16 +94,20 @@ private:
     Vec3f hand1PalmPosition, hand2PalmPostion;
     Vec3f hand1Velocity, hand2Velocity;
     
+	WindowRef cameraWindow;
+	CanonViewRef mCanonView;
     
 };
 void LeapMotionMain::prepareSettings( Settings *settings){
     //setting the window size and the frame rate for processing
-    settings->setWindowSize ( 1600, 900);
+    settings->setWindowSize ( 1000, 750);
     settings->setFrameRate (100.0f);
+
 }
 
 void LeapMotionMain::shutdown()
 {
+
 }
 
 void LeapMotionMain::drawHand(Leap::Hand &hand, Vec3f position)
@@ -333,8 +343,30 @@ void LeapMotionMain::drawHands()
         gl::popMatrices();
     }
 }
+/*
+void LeapMotionMain::draw(){
+	gl::setViewport(getWindowBounds());
+	gl::clear(ColorA(0, 0, 0, 0.0));
 
-void LeapMotionMain::draw()
+
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	gl::pushMatrices();
+
+	drawHands();
+
+	gl::popMatrices();
+	glPopAttrib();
+
+	gl::color(ColorA(0, 0, 0, 1));
+	if (!showParams)
+		return;
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	mParams->draw();
+	glPopAttrib();
+
+}
+*/
+void LeapMotionMain::virtualizationDraw()
 {
     
     
@@ -360,6 +392,9 @@ void LeapMotionMain::draw()
 
 }
 
+void LeapMotionMain::cameraDraw(){
+
+}
 void LeapMotionMain::update()
 {
     if (isPause) {
@@ -373,7 +408,7 @@ void LeapMotionMain::update()
             recordingFrameIndex++;
         }
     }else{
-        mLeap->update();
+       mLeap->update();
     }
     //std::cout << "frame" <<std::endl;
     
@@ -412,7 +447,8 @@ void LeapMotionMain::onFrame( Leap::Frame frame )
 void LeapMotionMain::setupGui()
 {
     std::cout << "Init GUI" <<std::endl;
-    mParams = cinder::params::InterfaceGl::create("Parameters", Vec2i(300,250));
+    mParams = cinder::params::InterfaceGl::create(getWindowIndex(0),"Parameters", Vec2i(300,250));
+
 	mParams->addText("DeviceFrequency","Lable='DeviceFrequency:'");
     mParams->addParam ("Scene Rotation", &mObjOrientation);
     mParams->addParam ("Hand Translation", &mTranslate);
@@ -423,12 +459,12 @@ void LeapMotionMain::setupGui()
     mParams->addButton("StartRecording", std::bind(&LeapMotionMain::StartRecording,this));
     
     
-    mLeftHandInfo = cinder::params::InterfaceGl::create("Left Hand Information", Vec2i(300,200));
+	mLeftHandInfo = cinder::params::InterfaceGl::create(getWindowIndex(0),"Left Hand Information", Vec2i(300, 200));
     mLeftHandInfo->addText("LeftHandPosition","Label='Position:'");
     mLeftHandInfo->addText("LeftHandV","Label='Velocity:'");
     mLeftHandInfo->addText("Confidence","Label='ConfidenceLevel:'");
     
-    mRightHandInfo=cinder::params::InterfaceGl::create("Right Hand Information", Vec2i(300,200));
+	mRightHandInfo = cinder::params::InterfaceGl::create(getWindowIndex(0),"Right Hand Information", Vec2i(300, 200));
     mRightHandInfo->addText("RightHandPosition","Label='Position:'");
     mRightHandInfo->addText("RightHandV","Label='Velocity:'");
     mRightHandInfo->addText("Confidence","Label='ConfidenceLevel:'");
@@ -439,11 +475,21 @@ void LeapMotionMain::setupGui()
     TwDefine(" Parameters position='10 10'");
     TwDefine(" 'Left Hand Information' position='10 260'");
     TwDefine(" 'Right Hand Information' position='10 460'");
+	
 }
 
 
 void LeapMotionMain::setup()
 {
+	//setUpCamera Window
+	cameraWindow = createWindow(Window::Format().size(600, 600));
+	cameraWindow->setPos(getWindowIndex(0)->getPos() - Vec2i(630, 0));
+	//cameraWindow->connectDraw(&LeapMotionMain::cameraDraw, this);
+	mCanonView = CanonView::create(CanonView::Settings().height(600).width(600).window(cameraWindow));
+
+	cameraWindow->connectDraw(&LeapMotionMain::draw, this);
+	getWindowIndex(0)->connectDraw(&LeapMotionMain::virtualizationDraw, this);
+	
     recordingFrameIndex = 0;
     isPlayingRecording = false;
     isPause = false;
@@ -539,6 +585,10 @@ void LeapMotionMain::fileDrop(cinder::app::FileDropEvent event){
     isPlayingRecording = true;
 }
 
+void LeapMotionMain::connectWindow(ci::app::WindowRef window)
+{
+
+}
 
 CINDER_APP_BASIC( LeapMotionMain, RendererGl )
 
