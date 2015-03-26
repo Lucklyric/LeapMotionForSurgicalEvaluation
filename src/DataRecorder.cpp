@@ -41,9 +41,9 @@ void DataRecorder::ParseCurrentFrametoFile(Leap::Frame currentFrame){
         << (now.tm_mon + 1) << '-'
         <<  now.tm_mday << '-' << now.tm_hour << '-' << now.tm_min << '-' << now.tm_sec;
 		string path = boost::filesystem::current_path().string();
-        ssLeapData <<path<<"/Output/"<<ss.str() << ".data" << endl;
-		ssLeftHandData <<path<< "/Output/" << "LeftHand-" << ss.str() << ".txt" << endl;
-		ssRightHandData <<path<< "/Output/" << "RgithHand-" << ss.str() << ".txt" << endl;
+        ssLeapData <<path<<"/Output/"<<ss.str()<<".data";
+		ssLeftHandData <<path<< "/Output/" << "LeftHand-" << ss.str() << ".txt";
+		ssRightHandData <<path<< "/Output/" << "RgithHand-" << ss.str() << ".txt";
         currentFileName = ssLeapData.str();
         currentLeftHandFileName = ssLeftHandData.str();
         currentRighthandFileName = ssRightHandData.str();
@@ -57,7 +57,9 @@ void DataRecorder::ParseCurrentFrametoFile(Leap::Frame currentFrame){
     {
         Leap::Frame frameToSerialize = currentFrame;
         std::string serialized = frameToSerialize.serialize();
-        out << (long)serialized.length() << serialized;
+		out << (long)serialized.length() << serialized;
+		//out << (long)serialized.length();
+		//_RPT1(_CRT_WARN, "\n string---%s\n-----", serialized);
         out.flush();
         out.close();
     }
@@ -71,6 +73,7 @@ void DataRecorder::ParseCurrentFrametoFile(Leap::Frame currentFrame){
         if (hand.isLeft()){
 			if (this->leftHandId == 0){
 				this->leftHandId = hand.id();
+				WriteToLeftHandFile(hand);
 			}
 			else{
 				if (this->leftHandId == hand.id()){
@@ -80,6 +83,7 @@ void DataRecorder::ParseCurrentFrametoFile(Leap::Frame currentFrame){
         }else{
 			if (this->rightHandId == 0){
 				this->rightHandId = hand.id();
+				WriteToRightHandFile(hand);
 			}
 			else{
 				if (this->rightHandId == hand.id()){
@@ -92,6 +96,8 @@ void DataRecorder::ParseCurrentFrametoFile(Leap::Frame currentFrame){
 
 void DataRecorder::EndReocrding(){
     this->isWriting = false;
+	this->leftHandId = 0;
+	this->rightHandId = 0;
 }
 
 string DataRecorder::ParseOneRowHandInformation(Leap::Hand hand){

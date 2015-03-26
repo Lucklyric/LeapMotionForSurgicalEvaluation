@@ -43,7 +43,7 @@
 #include "cinder/Vector.h"
 #include "../include/DataRecorder.h"
 #include <functional>
-#include "../include/Timer.h"
+
 
 namespace LeapMotion {
     
@@ -151,7 +151,6 @@ namespace LeapMotion {
         Leap::Device		mDevice;
         Listener			mListener;
         std::mutex			mMutex;
-		MTimer				mDeviceTimer;
     };
     
 }

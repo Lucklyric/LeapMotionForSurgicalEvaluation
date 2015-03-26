@@ -4,7 +4,7 @@
 % Load raw data from text (ASCII) file
  
 %Left hand raw data
-Lraw = importdata('L1.txt',' ',1); %imports data and ignores first row (headers)
+Lraw = importdata('L3N',' ',1); %imports data and ignores first row (headers)
 
 % Read coordinate data (PalmX, PalmY, PalmZ)
 xL = Lraw.data(2000:3000,9);   

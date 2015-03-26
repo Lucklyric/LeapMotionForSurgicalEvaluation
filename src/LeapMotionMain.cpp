@@ -22,7 +22,7 @@
 #include "cinder/app/FileDropEvent.h"
 #include <fstream>
 #include <functional>
-#include "../include/Timer.h"
+
 
 //Windows header files used
 #define WINVER 0x0500
@@ -36,11 +36,6 @@ using namespace ci::app;
 using namespace std;
 
 #define __BONES__
-void CALLBACK TimerProc(void* p)
-{
-	//LeapMotion::DeviceRef mDevice = *((LeapMotion::DeviceRef*)p);
-	//mDevice->fixedTimeRecord();
-}
 
 class LeapMotionMain : public ci::app::AppBasic
 {
@@ -61,7 +56,7 @@ public:
     void prepareSettings(Settings *settings);
     void fileDrop (FileDropEvent event);
     void keyDown( KeyEvent event );
-	void LeapMotionMain::connectWindow(ci::app::WindowRef window);
+	void connectWindow(ci::app::WindowRef window);
     std::shared_ptr<std::thread>		mThread;
 private:
     
@@ -76,7 +71,6 @@ private:
     //Recording Parameters
     std::vector<Leap::Frame> deserializedFrames;
 
-	MTimer					appTimer;
     long int recordingFrameIndex;
     bool isPause;
     
@@ -482,12 +476,12 @@ void LeapMotionMain::setupGui()
 void LeapMotionMain::setup()
 {
 	//setUpCamera Window
-	cameraWindow = createWindow(Window::Format().size(600, 600));
-	cameraWindow->setPos(getWindowIndex(0)->getPos() - Vec2i(630, 0));
+	//cameraWindow = createWindow(Window::Format().size(600, 600));
+	//cameraWindow->setPos(getWindowIndex(0)->getPos() - Vec2i(630, 0));
 	//cameraWindow->connectDraw(&LeapMotionMain::cameraDraw, this);
-	mCanonView = CanonView::create(CanonView::Settings().height(600).width(600).window(cameraWindow));
+	//mCanonView = CanonView::create(CanonView::Settings().height(600).width(600).window(cameraWindow));
 
-	cameraWindow->connectDraw(&LeapMotionMain::draw, this);
+	//cameraWindow->connectDraw(&LeapMotionMain::draw, this);
 	getWindowIndex(0)->connectDraw(&LeapMotionMain::virtualizationDraw, this);
 	
     recordingFrameIndex = 0;
@@ -510,7 +504,7 @@ void LeapMotionMain::setup()
     mCamera = CameraPersp( getWindowWidth(), getWindowHeight(), 60.0f, 0.01f, 5000.0f );
     mCamera.lookAt( Vec3f( 0.0f, 500.0f, 500.0f ), Vec3f( 0.0f, 250.0f, 0.0f ) );
     setupGui();
-//    // Start device
+    // Start device
     mLeap = LeapMotion::Device::create();
     mLeap->connectEventHandler( &LeapMotionMain::onFrame, this );
     
@@ -523,14 +517,10 @@ void LeapMotionMain::CallDeviceUpdate(){
 void LeapMotionMain::StartRecording(){
     //mLeap->outPutRecordingFile();
     if ((mLeap->isRecording())) {
-		appTimer.Cancel();
         mLeap->outPutRecordingFile();
         mParams->setOptions("StartRecording","Label='StartRecording'");
     }else{
         mLeap->startRecording();
-		appTimer.registerHandler(TimerProc,&mLeap);
-		appTimer.setInterval((1/100)*1000);
-		appTimer.Start();
         mParams->setOptions("StartRecording","Label='StopRecording'");
     }
 }
@@ -557,6 +547,23 @@ void LeapMotionMain::keyDown( KeyEvent event )
 void LeapMotionMain::fileDrop(cinder::app::FileDropEvent event){
     deserializedFrames.clear();
     std::string inFilename = event.getFile(0).string();
+	//FILE* fp = fopen(inFilename.c_str(), "rb");
+	//if (fp) {
+	//	long frame_size;
+	//	while (fread(&frame_size, sizeof(long), 1, fp) == 1) {
+	//		char* data = (char*)malloc(frame_size*sizeof(char));
+	//		Leap::Frame newFrame;
+	//		newFrame.deserialize(std::string(data, frame_size));
+	//		deserializedFrames.push_back(newFrame);
+	//	}
+
+	//	fclose(fp);
+	//	
+	//}
+	//else {
+
+	//}
+	
     std::ifstream in(inFilename, std::fstream::in);
     std::string contents;
     if (in)
@@ -581,6 +588,7 @@ void LeapMotionMain::fileDrop(cinder::app::FileDropEvent event){
         std::cout << "Couldn't open " << inFilename << " for reading." << std::endl;
     }
     std::cout << deserializedFrames.size() << std::endl;
+	_RPT1(_CRT_WARN, "\n Size---%s", deserializedFrames.size());
     isPause = true;
     isPlayingRecording = true;
 }
